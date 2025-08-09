@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Exercises - Gym Progress Tracker</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .nav { margin-bottom: 20px; }
+        .nav a { margin-right: 15px; text-decoration: none; color: #007bff; }
+        .nav a:hover { text-decoration: underline; }
+        .exercise-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .exercise-card { border: 1px solid #ddd; border-radius: 8px; padding: 15px; background-color: #f9f9f9; }
+        .exercise-card h3 { margin-top: 0; color: #333; }
+        .muscle-group { background-color: #007bff; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+        .exercise-type { background-color: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; margin-left: 5px; }
+    </style>
+</head>
+<body>
+<div class="nav">
+    <a href="/">Home</a>
+    <a href="/exercises">Exercises</a>
+</div>
+
+<h1>Exercise Library</h1>
+<p>Browse all available exercises in your gym tracker.</p>
+
+<div class="exercise-grid">
+    <div th:each="exercise : ${exercises}" class="exercise-card">
+        <h3 th:text="${exercise.name}">Exercise Name</h3>
+        <p th:text="${exercise.description}">Exercise description</p>
+        <div>
+            <span class="muscle-group" th:text="${exercise.muscleGroup}">CHEST</span>
+            <span class="exercise-type" th:text="${exercise.type}">STRENGTH</span>
+        </div>
+    </div>
+</div>
+
+<div th:if="${#lists.isEmpty(exercises)}">
+    <p>No exercises found. The database might be initializing...</p>
+</div>
+</body>
+</html>

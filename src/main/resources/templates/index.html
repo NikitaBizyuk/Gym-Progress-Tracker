@@ -2,16 +2,46 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Gym Progress Tracker</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .nav a { margin-right: 15px; text-decoration: none; color: #007bff; padding: 10px 15px; background-color: #f8f9fa; border-radius: 5px; }
+        .nav a:hover { background-color: #e9ecef; text-decoration: none; }
+        .stats { background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .hero { background-color: #007bff; color: white; padding: 40px; border-radius: 10px; text-align: center; margin: 20px 0; }
+        .auth-buttons a { background-color: #28a745; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin: 0 10px; }
+        .auth-buttons a.login { background-color: #007bff; }
+    </style>
 </head>
 <body>
-<h1>Welcome to Gym Progress Tracker!</h1>
-<p>Your fitness journey starts here.</p>
+<div class="header">
+    <div class="nav">
+        <a href="/">Home</a>
+        <a href="/exercises">Browse Exercises</a>
+    </div>
+    <div class="auth-buttons">
+        <a href="/login" class="login">Login</a>
+        <a href="/register">Register</a>
+    </div>
+</div>
+
+<div class="hero">
+    <h1>Welcome to Gym Progress Tracker!</h1>
+    <p>Track your workouts, monitor progress, and achieve your fitness goals.</p>
+</div>
+
+<div class="stats">
+    <h3>Platform Statistics:</h3>
+    <p>👥 Total Users: <span th:text="${userCount}">0</span></p>
+    <p>💪 Available Exercises: <span th:text="${exerciseCount}">0</span></p>
+    <p>🏋️ Total Workouts Logged: <span th:text="${workoutCount}">0</span></p>
+</div>
 
 <div>
-    <h3>Database Status:</h3>
-    <p>Users: <span th:text="${userCount}">Loading...</span></p>
-    <p>Exercises: <span th:text="${exerciseCount}">Loading...</span></p>
-    <p>Workouts: <span th:text="${workoutCount}">Loading...</span></p>
+    <h3>Get Started:</h3>
+    <p>Create an account to start tracking your fitness journey!</p>
+    <a href="/register" style="background-color: #007bff; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-size: 18px;">Join Now</a>
 </div>
 </body>
 </html>
