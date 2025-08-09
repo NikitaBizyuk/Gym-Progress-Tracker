@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Start Workout - Gym Progress Tracker</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #007bff; }
+        .nav a { color: #007bff; text-decoration: none; margin-right: 20px; font-weight: bold; }
+        .nav a:hover { text-decoration: underline; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
+        input[type="text"], input[type="number"], textarea, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
+        .exercise-section { border: 2px solid #e9ecef; border-radius: 8px; padding: 20px; margin-bottom: 20px; background-color: #f8f9fa; }
+        .exercise-section h3 { margin-top: 0; color: #007bff; }
+        .exercise-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 2fr auto; gap: 15px; align-items: end; margin-bottom: 15px; }
+        .exercise-row label { margin-bottom: 5px; font-size: 14px; font-weight: bold; }
+        .btn { padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; text-decoration: none; display: inline-block; text-align: center; }
+        .btn-primary { background-color: #007bff; color: white; }
+        .btn-success { background-color: #28a745; color: white; }
+        .btn-danger { background-color: #dc3545; color: white; }
+        .btn-secondary { background-color: #6c757d; color: white; }
+        .btn:hover { opacity: 0.9; }
+        .btn-add { background-color: #17a2b8; color: white; margin-bottom: 20px; }
+        .alert { padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .workout-header { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+        #exercises-container { min-height: 100px; }
+        .remove-btn { background: none; border: none; color: #dc3545; font-size: 18px; cursor: pointer; padding: 5px; }
+        .remove-btn:hover { background-color: #f8d7da; border-radius: 3px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🏋️ Start New Workout</h1>
+        <div class="nav">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/exercises">Exercises</a>
+            <a href="/workouts/history">My Workouts</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <form method="post" action="/workouts/save" id="workoutForm">
+        <div class="workout-header">
+            <div class="form-group">
+                <label for="workoutName">Workout Name:</label>
+                <input type="text" id="workoutName" name="workoutName" th:value="${workout.name}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="durationMinutes">Duration (minutes):</label>
+                <input type="number" id="durationMinutes" name="durationMinutes" min="1" max="300" placeholder="60">
+            </div>
+
+            <div class="form-group">
+                <label for="notes">Workout Notes:</label>
+                <textarea id="notes" name="notes" rows="3" placeholder="How did you feel? Any observations?"></textarea>
+            </div>
+        </div>
+
+        <div class="exercise-section">
+            <h3>Exercises</h3>
+            <button type="button" class="btn btn-add" onclick="addExercise()">+ Add Exercise</button>
+
+            <div id="exercises-container">
+                <!-- Exercise rows will be added here dynamically -->
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button type="submit" class="btn btn-success" style="margin-right: 10px;">💾 Save Workout</button>
+            <a href="/dashboard" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    let exerciseCount = 0;
+    const exercises = [
+        <th:block th:each="exercise : ${exercises}">
+            {id: <span th:text="${exercise.id}"></span>, name: '<span th:text="${exercise.name}"></span>'},
+        </th:block>
+    ];
+
+    function addExercise() {
+        exerciseCount++;
+        const container = document.getElementById('exercises-container');
+
+        const exerciseRow = document.createElement('div');
+        exerciseRow.className = 'exercise-row';
+        exerciseRow.id = 'exercise-' + exerciseCount;
+
+        exerciseRow.innerHTML = `
+            <div>
+                <label>Exercise:</label>
+                <select name="exerciseIds" required>
+                    <option value="">Select Exercise...</option>
+                    ${exercises.map(ex => `<option value="${ex.id}">${ex.name}</option>`).join('')}
+                </select>
+            </div>
+            <div>
+                <label>Sets:</label>
+                <input type="number" name="sets" min="1" max="20" required placeholder="3">
+            </div>
+            <div>
+                <label>Reps:</label>
+                <input type="number" name="reps" min="1" max="100" required placeholder="10">
+            </div>
+            <div>
+                <label>Weight (lbs):</label>
+                <input type="number" name="weights" min="0" max="1000" step="0.5" required placeholder="135">
+            </div>
+            <div>
+                <label>Notes:</label>
+                <input type="text" name="exerciseNotes" placeholder="Good form, felt strong">
+            </div>
+            <div>
+                <button type="button" class="remove-btn" onclick="removeExercise(${exerciseCount})" title="Remove Exercise">
+                    ✕
+                </button>
+            </div>
+        `;
+
+        container.appendChild(exerciseRow);
+    }
+
+    function removeExercise(id) {
+        const element = document.getElementById('exercise-' + id);
+        if (element) {
+            element.remove();
+        }
+    }
+
+    // Add first exercise automatically
+    addExercise();
+
+    // Form validation
+    document.getElementById('workoutForm').addEventListener('submit', function(e) {
+        const exerciseRows = document.querySelectorAll('.exercise-row');
+        if (exerciseRows.length === 0) {
+            e.preventDefault();
+            alert('Please add at least one exercise to your workout!');
+            return;
+        }
+
+        // Check if all exercise fields are filled
+        let allValid = true;
+        exerciseRows.forEach(row => {
+            const requiredFields = row.querySelectorAll('select[required], input[required]');
+            requiredFields.forEach(field => {
+                if (!field.value) {
+                    allValid = false;
+                }
+            });
+        });
+
+        if (!allValid) {
+            e.preventDefault();
+            alert('Please fill in all required fields for each exercise!');
+        }
+    });
+</script>
+</body>
+</html>
