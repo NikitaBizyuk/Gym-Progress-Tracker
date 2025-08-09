@@ -1,11 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
     <title>Gym Progress Tracker</title>
 </head>
 <body>
 <h1>Welcome to Gym Progress Tracker!</h1>
 <p>Your fitness journey starts here.</p>
+
+<div>
+    <h3>Database Status:</h3>
+    <p>Users: <span th:text="${userCount}">Loading...</span></p>
+    <p>Exercises: <span th:text="${exerciseCount}">Loading...</span></p>
+    <p>Workouts: <span th:text="${workoutCount}">Loading...</span></p>
+</div>
 </body>
 </html>
